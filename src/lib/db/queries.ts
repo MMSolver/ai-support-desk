@@ -37,7 +37,14 @@ function mapRowToTicket(row: TicketRow): Ticket {
   };
 }
 
-export interface CreateTicketInput {
+/**
+ * Persistence-layer input shape — distinct from (and named differently
+ * than) `CreateTicketInput` in `@/lib/validations/ticket`, which is the
+ * *request-validation* type (allows `''` for optional fields, inferred from
+ * the Zod schema). Callers validate with that schema first, then normalize
+ * `''` -> `null` before calling `createTicket`.
+ */
+export interface CreateTicketDbInput {
   subject: string;
   message: string;
   customerName?: string | null;
@@ -50,7 +57,7 @@ export interface CreateTicketInput {
  * (or the ticket is marked `needs_review` via `markTicketNeedsReview` on AI
  * failure) — see PROJECT.md §13.
  */
-export async function createTicket(input: CreateTicketInput): Promise<Ticket> {
+export async function createTicket(input: CreateTicketDbInput): Promise<Ticket> {
   const supabase = getServiceSupabase();
 
   const { data, error } = await supabase
