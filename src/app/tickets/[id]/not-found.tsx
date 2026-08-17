@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 
 /** 404 UI for a missing/invalid ticket id (PROJECT.md §16). */
 export default function TicketNotFound() {
@@ -10,7 +10,9 @@ export default function TicketNotFound() {
       <p className="text-muted-foreground text-sm">
         This ticket doesn&apos;t exist or may have been removed.
       </p>
-      <Button render={<Link href="/" />}>Back to dashboard</Button>
+      <Link href="/" className={buttonVariants()}>
+        Back to dashboard
+      </Link>
     </div>
   );
 }

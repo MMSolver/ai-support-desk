@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { PageHeader } from '@/components/shared/page-header';
 import { TicketCard } from '@/components/tickets/ticket-card';
 import { TicketFilters } from '@/components/tickets/ticket-filters';
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import { listTickets } from '@/lib/db/queries';
 import { listTicketsSchema, type ListTicketsQuery } from '@/lib/validations/ticket';
 
@@ -45,7 +45,11 @@ export default async function TicketsPage(props: PageProps<'/tickets'>) {
       <PageHeader
         title="Tickets"
         description={`${result.total} ticket${result.total === 1 ? '' : 's'} total`}
-        action={<Button render={<Link href="/tickets/new" />}>New Ticket</Button>}
+        action={
+          <Link href="/tickets/new" className={buttonVariants()}>
+            New Ticket
+          </Link>
+        }
       />
 
       <TicketFilters />

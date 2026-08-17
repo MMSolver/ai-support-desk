@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 const NAV_LINKS = [
@@ -44,9 +44,9 @@ export function SiteHeader() {
             );
           })}
         </nav>
-        <Button render={<Link href="/tickets/new" />} size="sm">
+        <Link href="/tickets/new" className={buttonVariants({ size: 'sm' })}>
           New Ticket
-        </Button>
+        </Link>
       </div>
     </header>
   );

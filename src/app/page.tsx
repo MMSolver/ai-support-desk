@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { RecentTickets } from '@/components/dashboard/recent-tickets';
 import { StatsCards } from '@/components/dashboard/stats-cards';
 import { PageHeader } from '@/components/shared/page-header';
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import { getDashboardStats, listTickets } from '@/lib/db/queries';
 
 const RECENT_TICKETS_LIMIT = 5;
@@ -27,7 +27,11 @@ export default async function DashboardPage() {
       <PageHeader
         title="Dashboard"
         description="An overview of incoming support tickets and their AI analysis."
-        action={<Button render={<Link href="/tickets/new" />}>New Ticket</Button>}
+        action={
+          <Link href="/tickets/new" className={buttonVariants()}>
+            New Ticket
+          </Link>
+        }
       />
       <StatsCards stats={stats} />
       <RecentTickets tickets={recent.data} />
