@@ -8,6 +8,8 @@ import type { TicketAnalysis } from './types';
  * by adding a branch to the factory rather than rewiring every call site.
  */
 export interface AIService {
+  /** Identifies the underlying model (stored as `tickets.ai_model`). */
+  readonly modelName: string;
   analyzeTicket(subject: string, message: string): Promise<TicketAnalysis>;
 }
 

@@ -98,6 +98,7 @@ async function requestAnalysis(subject: string, message: string): Promise<Ticket
  *   immediately; the caller is responsible for the `needs_review` fallback.
  */
 export const openAIService: AIService = {
+  modelName: MODEL,
   async analyzeTicket(subject: string, message: string): Promise<TicketAnalysis> {
     try {
       return await requestAnalysis(subject, message);
