@@ -34,6 +34,11 @@ export const createTicketSchema = z.object({
 });
 
 /**
+ * Validates a ticket id path param, e.g. `GET /api/tickets/[id]`.
+ */
+export const ticketIdSchema = z.uuid();
+
+/**
  * Validates the query parameters of `GET /api/tickets` (PROJECT.md §14).
  */
 export const listTicketsSchema = z.object({

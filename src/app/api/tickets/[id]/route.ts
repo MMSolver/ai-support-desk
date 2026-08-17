@@ -1,10 +1,8 @@
 import { NextRequest } from 'next/server';
-import { z } from 'zod';
 
 import { apiError, apiSuccess } from '@/lib/api/response';
 import { getTicketById } from '@/lib/db/queries';
-
-const ticketIdSchema = z.uuid();
+import { ticketIdSchema } from '@/lib/validations/ticket';
 
 /**
  * Fetches a single ticket by id (PROJECT.md §9).

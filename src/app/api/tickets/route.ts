@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 
 import { getAIService } from '@/lib/ai/service';
+import type { TicketAnalysis } from '@/lib/ai/types';
 import { apiError, apiSuccess } from '@/lib/api/response';
 import {
   createTicket,
@@ -10,6 +11,33 @@ import {
 } from '@/lib/db/queries';
 import { createTicketSchema, listTicketsSchema } from '@/lib/validations/ticket';
 import type { Ticket } from '@/types';
+
+/**
+ * Falls back to `needs_review` when AI analysis could not be produced or
+ * persisted. The ticket itself was already saved by `createTicket` earlier
+ * in the request, so it's never lost (PROJECT.md §11/§15) — this only
+ * decides how its status/response reflect that the analysis didn't land.
+ */
+async function fallbackToNeedsReview(
+  ticket: Ticket,
+): Promise<ReturnType<typeof apiSuccess<Ticket>>> {
+  try {
+    const needsReview = await markTicketNeedsReview(ticket.id);
+    return apiSuccess<Ticket>(needsReview, {
+      status: 201,
+      warning: 'AI analysis failed; this ticket needs manual review.',
+    });
+  } catch (dbError) {
+    // The needs_review update itself failed too. The ticket row still
+    // exists (status: ticket.status) — report that accurately rather than
+    // claiming a status transition that didn't happen.
+    console.error(`Failed to mark ticket ${ticket.id} as needs_review:`, dbError);
+    return apiSuccess<Ticket>(ticket, {
+      status: 201,
+      warning: `AI analysis failed; the ticket was saved but its review status could not be updated (still '${ticket.status}').`,
+    });
+  }
+}
 
 /**
  * Creates a ticket and runs AI analysis on it (PROJECT.md §9/§13).
@@ -54,33 +82,27 @@ export async function POST(request: NextRequest) {
   const aiService = getAIService();
   const startedAt = Date.now();
 
+  let analysis: TicketAnalysis;
   try {
-    const analysis = await aiService.analyzeTicket(subject, message);
+    analysis = await aiService.analyzeTicket(subject, message);
+  } catch (error) {
+    console.error(`AI analysis failed for ticket ${ticket.id}:`, error);
+    return fallbackToNeedsReview(ticket);
+  }
+
+  try {
     const analyzed = await updateTicketAnalysis(ticket.id, {
       ...analysis,
       model: aiService.modelName,
       processingTimeMs: Date.now() - startedAt,
     });
     return apiSuccess<Ticket>(analyzed, { status: 201 });
-  } catch (error) {
-    console.error(`AI analysis failed for ticket ${ticket.id}:`, error);
-
-    try {
-      const needsReview = await markTicketNeedsReview(ticket.id);
-      return apiSuccess<Ticket>(needsReview, {
-        status: 201,
-        warning: 'AI analysis failed; this ticket needs manual review.',
-      });
-    } catch (dbError) {
-      // Both the AI call and the needs_review update failed. The ticket
-      // itself was still saved (status: 'processing') — return that rather
-      // than reporting the whole request as failed.
-      console.error(`Failed to mark ticket ${ticket.id} as needs_review:`, dbError);
-      return apiSuccess<Ticket>(ticket, {
-        status: 201,
-        warning: 'AI analysis failed; this ticket needs manual review.',
-      });
-    }
+  } catch (dbError) {
+    // The AI call succeeded but persisting its result failed — a DB
+    // problem, not an AI one. Distinguished from the block above so the
+    // log (and, if ever needed, the handling) doesn't misattribute it.
+    console.error(`Failed to persist AI analysis for ticket ${ticket.id}:`, dbError);
+    return fallbackToNeedsReview(ticket);
   }
 }
 
