@@ -1,6 +1,5 @@
 'use client';
 
-import { useTheme } from 'next-themes';
 import { Toaster as Sonner, type ToasterProps } from 'sonner';
 import {
   CircleCheckIcon,
@@ -10,12 +9,16 @@ import {
   Loader2Icon,
 } from 'lucide-react';
 
+/**
+ * No theme provider (PROJECT.md §5: dark mode is infrastructure-only, no
+ * toggle for MVP) — `theme="system"` is enough on its own. Sonner tracks
+ * `prefers-color-scheme` internally for that mode; it doesn't need a value
+ * pushed in from React.
+ */
 const Toaster = ({ ...props }: ToasterProps) => {
-  const { theme = 'system' } = useTheme();
-
   return (
     <Sonner
-      theme={theme as ToasterProps['theme']}
+      theme="system"
       className="toaster group"
       icons={{
         success: <CircleCheckIcon className="size-4" />,
