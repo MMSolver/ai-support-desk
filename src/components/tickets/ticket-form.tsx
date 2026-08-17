@@ -1,7 +1,9 @@
 'use client';
 
+import { Loader2Icon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState, type FormEvent } from 'react';
+import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,14 +17,16 @@ type FieldErrors = Partial<
 >;
 
 /**
- * Ticket creation form (PROJECT.md §8/§13/§14). Client-side validation
- * (via the same `createTicketSchema` the API route uses) is for UX only —
- * the server re-validates independently and is the source of truth.
+ * Ticket creation form (PROJECT.md §8/§13/§14/§16/§19). Client-side
+ * validation (via the same `createTicketSchema` the API route uses) is for
+ * UX only — the server re-validates independently and is the source of
+ * truth.
  *
- * On success, navigates straight to the ticket detail page (PROJECT.md §13
- * step 11) rather than showing a toast — the detail page itself reflects
- * the outcome (including a `needs_review` fallback), and toasts are a
- * Phase 6 concern (PROJECT.md §26).
+ * On success, a toast fires and the page navigates to the ticket detail
+ * page (PROJECT.md §13 step 11 / §19); the detail page itself still
+ * reflects the outcome (including a `needs_review` fallback) for anyone
+ * who lands there later. The toast's wording always echoes the button that
+ * triggered it — "Submit ticket" produces "Ticket submitted".
  */
 export function TicketForm() {
   const router = useRouter();
@@ -69,19 +73,49 @@ export function TicketForm() {
 
       if (!result.success) {
         setFormError(result.error.message);
+        toast.error(result.error.message);
         setIsSubmitting(false);
         return;
       }
 
+      if (result.warning) {
+        toast.warning('Ticket submitted', { description: result.warning });
+      } else {
+        toast.success('Ticket submitted', { description: 'AI analysis complete.' });
+      }
+
       router.push(`/tickets/${result.data.id}`);
     } catch {
-      setFormError('Could not reach the server. Please check your connection and try again.');
+      const message = 'Could not reach the server. Please check your connection and try again.';
+      setFormError(message);
+      toast.error(message);
       setIsSubmitting(false);
     }
   }
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-xl space-y-5">
+    <form onSubmit={handleSubmit} className="w-full max-w-[600px] space-y-5">
+      {isSubmitting ? (
+        // Full-page loading: spinner + message + indeterminate progress bar
+        // (PROJECT.md §16). motion-reduce: the spinner and bar both stop
+        // spinning/sliding, but the overlay and message alone already
+        // communicate the wait.
+        <div
+          role="status"
+          aria-live="polite"
+          className="bg-background/80 fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 backdrop-blur-sm"
+        >
+          <Loader2Icon
+            className="text-muted-foreground size-8 animate-spin motion-reduce:animate-none"
+            aria-hidden="true"
+          />
+          <p className="text-sm font-medium">Analyzing your ticket…</p>
+          <div className="bg-muted h-1 w-48 overflow-hidden rounded-full">
+            <div className="bg-primary h-full w-full origin-left animate-[indeterminate-progress_1.4s_ease-in-out_infinite] motion-reduce:animate-none" />
+          </div>
+        </div>
+      ) : null}
+
       {formError ? (
         <p className="border-destructive/30 bg-destructive/10 text-destructive rounded-lg border px-3 py-2 text-sm">
           {formError}

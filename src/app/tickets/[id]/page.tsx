@@ -12,7 +12,26 @@ import { ticketIdSchema } from '@/lib/validations/ticket';
 // here immediately after the ticket is saved).
 export const dynamic = 'force-dynamic';
 
-/** Ticket detail page (PROJECT.md §8/§16/§26). */
+/**
+ * Ticket detail page (PROJECT.md §8/§16/§26).
+ *
+ * Deliberately has no sibling `loading.tsx`, and PROJECT.md §16's "Ticket
+ * detay: Skeleton layout" is not implemented here for that reason: any
+ * ancestor `loading.tsx` (app/loading.tsx, app/tickets/loading.tsx — both
+ * genuinely useful for their own routes, which never call `notFound()`)
+ * wraps this segment in a Suspense boundary too. Once that boundary's
+ * fallback flushes, the response has already started streaming a 200, so
+ * `notFound()` below can no longer change the status — it degrades to a
+ * "soft 404" (200 + `noindex`, correct UI, wrong status code). Confirmed
+ * empirically: removing every loading.tsx in the tree restores a real 404;
+ * restoring any one of them (even several levels up) brings the soft-404
+ * back. This is documented, expected Next.js behavior, not a bug —
+ * see node_modules/next/dist/docs/.../file-conventions/loading.md
+ * ("Status Codes" / "When is the response body streamed?"). Fixing it for
+ * real would mean pulling this route into its own route-group root layout
+ * so it shares no ancestor Suspense boundary with `/` or `/tickets` — out
+ * of scope for this pass; flagged for a future phase if it matters.
+ */
 export default async function TicketDetailPage(props: PageProps<'/tickets/[id]'>) {
   const { id } = await props.params;
 

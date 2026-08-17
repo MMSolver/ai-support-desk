@@ -1,8 +1,11 @@
+import { SearchXIcon } from 'lucide-react';
 import Link from 'next/link';
 
+import { EmptyState } from '@/components/shared/empty-state';
 import { PageHeader } from '@/components/shared/page-header';
 import { TicketCard } from '@/components/tickets/ticket-card';
 import { TicketFilters } from '@/components/tickets/ticket-filters';
+import { TicketTable } from '@/components/tickets/ticket-table';
 import { buttonVariants } from '@/components/ui/button';
 import { listTickets } from '@/lib/db/queries';
 import { listTicketsSchema, type ListTicketsQuery } from '@/lib/validations/ticket';
@@ -55,15 +58,40 @@ export default async function TicketsPage(props: PageProps<'/tickets'>) {
       <TicketFilters />
 
       {result.data.length === 0 ? (
-        <p className="text-muted-foreground text-sm">
-          {hasFilters ? 'No tickets match your filters.' : 'No tickets yet.'}
-        </p>
+        hasFilters ? (
+          <EmptyState
+            icon={<SearchXIcon className="size-8" />}
+            title="No tickets match your filters"
+            description="Try a different status, priority, or category."
+            action={
+              <Link href="/tickets" className={buttonVariants({ variant: 'outline', size: 'sm' })}>
+                Clear filters
+              </Link>
+            }
+          />
+        ) : (
+          <EmptyState
+            title="No tickets yet"
+            description="Create your first ticket to see it here."
+            action={
+              <Link href="/tickets/new" className={buttonVariants({ size: 'sm' })}>
+                Create your first ticket
+              </Link>
+            }
+          />
+        )
       ) : (
-        <div className="space-y-3">
-          {result.data.map((ticket) => (
-            <TicketCard key={ticket.id} ticket={ticket} />
-          ))}
-        </div>
+        <>
+          {/* Card list on mobile, table on desktop (PROJECT.md §20). */}
+          <div className="space-y-3 md:hidden">
+            {result.data.map((ticket) => (
+              <TicketCard key={ticket.id} ticket={ticket} />
+            ))}
+          </div>
+          <div className="hidden md:block">
+            <TicketTable tickets={result.data} />
+          </div>
+        </>
       )}
 
       {totalPages > 1 ? (

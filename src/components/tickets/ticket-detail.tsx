@@ -1,3 +1,5 @@
+import { AlertTriangleIcon, SparklesIcon } from 'lucide-react';
+
 import { CategoryBadge } from '@/components/shared/category-badge';
 import { PriorityBadge } from '@/components/shared/priority-badge';
 import { StatusBadge } from '@/components/shared/status-badge';
@@ -78,12 +80,26 @@ export function TicketDetail({ ticket }: { ticket: Ticket }) {
                 ) : null}
               </div>
             </div>
+          ) : ticket.status === 'needs_review' ? (
+            <div className="border-destructive/30 bg-destructive/5 flex items-start gap-2.5 rounded-lg border px-3 py-2.5">
+              <AlertTriangleIcon
+                className="text-destructive mt-0.5 size-4 shrink-0"
+                aria-hidden="true"
+              />
+              <p className="text-sm">
+                AI analysis could not be completed automatically. This ticket needs manual review.
+              </p>
+            </div>
           ) : (
-            <p className="text-muted-foreground text-sm">
-              {ticket.status === 'needs_review'
-                ? 'AI analysis could not be completed automatically. This ticket needs manual review.'
-                : 'Analysis pending — this ticket will be analyzed shortly.'}
-            </p>
+            <div className="border-border bg-muted/30 flex items-start gap-2.5 rounded-lg border px-3 py-2.5">
+              <SparklesIcon
+                className="text-muted-foreground mt-0.5 size-4 shrink-0"
+                aria-hidden="true"
+              />
+              <p className="text-muted-foreground text-sm">
+                Analysis pending — this ticket will be analyzed shortly.
+              </p>
+            </div>
           )}
         </CardContent>
       </Card>

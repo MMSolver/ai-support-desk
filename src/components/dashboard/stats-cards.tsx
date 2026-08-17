@@ -20,7 +20,8 @@ export function StatsCards({ stats }: { stats: DashboardStats }) {
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+      {/* 1 column on mobile, 4 on desktop (PROJECT.md §20). */}
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
         {highlights.map((item) => (
           <Card key={item.label}>
             <CardHeader>
