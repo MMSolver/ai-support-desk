@@ -9,6 +9,7 @@ const STATUS_STYLES: Record<TicketStatus, string> = {
   resolved: 'border-transparent bg-green-500/15 text-green-700 dark:text-green-400',
   closed: 'border-transparent bg-muted text-muted-foreground',
   needs_review: 'border-transparent bg-orange-500/15 text-orange-700 dark:text-orange-400',
+  processing: 'border-transparent bg-muted text-muted-foreground',
 };
 
 export function StatusBadge({ status, className }: { status: TicketStatus; className?: string }) {

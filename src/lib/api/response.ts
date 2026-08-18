@@ -26,11 +26,11 @@ export function apiSuccess<T>(
 export function apiError(
   code: ApiError['error']['code'],
   message: string,
-  options: { status: number; details?: unknown },
+  options: { status: number; details?: unknown; headers?: HeadersInit },
 ): NextResponse<ApiError> {
   const body: ApiError = { success: false, error: { message, code } };
   if (options.details !== undefined) {
     body.error.details = options.details;
   }
-  return NextResponse.json(body, { status: options.status });
+  return NextResponse.json(body, { status: options.status, headers: options.headers });
 }

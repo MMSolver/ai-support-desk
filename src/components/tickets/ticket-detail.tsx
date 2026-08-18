@@ -47,7 +47,7 @@ export function TicketDetail({ ticket }: { ticket: Ticket }) {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card data-testid="ai-analysis">
         <CardHeader>
           <CardTitle>AI analysis</CardTitle>
         </CardHeader>
@@ -55,13 +55,19 @@ export function TicketDetail({ ticket }: { ticket: Ticket }) {
           {hasAnalysis && ticket.aiCategory && ticket.aiPriority ? (
             <div className="space-y-4">
               <div className="flex flex-wrap items-center gap-1.5">
-                <PriorityBadge priority={ticket.aiPriority} />
-                <CategoryBadge category={ticket.aiCategory} />
+                <span data-testid="ai-priority">
+                  <PriorityBadge priority={ticket.aiPriority} />
+                </span>
+                <span data-testid="ai-category">
+                  <CategoryBadge category={ticket.aiCategory} />
+                </span>
               </div>
               {ticket.aiSummary ? (
                 <div>
                   <p className="text-muted-foreground text-xs font-medium">Summary</p>
-                  <p className="text-sm">{ticket.aiSummary}</p>
+                  <p data-testid="ai-summary" className="text-sm">
+                    {ticket.aiSummary}
+                  </p>
                 </div>
               ) : null}
               {ticket.aiSuggestedResponse ? (
@@ -81,7 +87,10 @@ export function TicketDetail({ ticket }: { ticket: Ticket }) {
               </div>
             </div>
           ) : ticket.status === 'needs_review' ? (
-            <div className="border-destructive/30 bg-destructive/5 flex items-start gap-2.5 rounded-lg border px-3 py-2.5">
+            <div
+              data-testid="needs-review-banner"
+              className="border-destructive/30 bg-destructive/5 flex items-start gap-2.5 rounded-lg border px-3 py-2.5"
+            >
               <AlertTriangleIcon
                 className="text-destructive mt-0.5 size-4 shrink-0"
                 aria-hidden="true"
@@ -91,7 +100,10 @@ export function TicketDetail({ ticket }: { ticket: Ticket }) {
               </p>
             </div>
           ) : (
-            <div className="border-border bg-muted/30 flex items-start gap-2.5 rounded-lg border px-3 py-2.5">
+            <div
+              data-testid="analysis-pending-banner"
+              className="border-border bg-muted/30 flex items-start gap-2.5 rounded-lg border px-3 py-2.5"
+            >
               <SparklesIcon
                 className="text-muted-foreground mt-0.5 size-4 shrink-0"
                 aria-hidden="true"

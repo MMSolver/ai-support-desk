@@ -3,6 +3,7 @@ import { NextRequest } from 'next/server';
 import { getAIService } from '@/lib/ai/service';
 import type { TicketAnalysis } from '@/lib/ai/types';
 import { apiError, apiSuccess } from '@/lib/api/response';
+import { checkRateLimit, getClientIp } from '@/lib/api/rate-limit';
 import {
   createTicket,
   listTickets,
@@ -47,8 +48,21 @@ async function fallbackToNeedsReview(
  * with a `warning` is still returned (PROJECT.md §11/§15) — the caller
  * should treat `success: true` as "the ticket was saved", not "AI analysis
  * completed".
+ *
+ * Rate limited per-IP (PROJECT.md §18) since every request here triggers a
+ * real OpenAI call — this is the one endpoint that actually costs money per
+ * request.
  */
 export async function POST(request: NextRequest) {
+  const clientIp = getClientIp(request.headers);
+  const rateLimit = checkRateLimit(clientIp);
+  if (!rateLimit.allowed) {
+    return apiError('RATE_LIMITED', 'Too many requests. Please try again shortly.', {
+      status: 429,
+      headers: { 'Retry-After': String(rateLimit.retryAfterSeconds) },
+    });
+  }
+
   let body: unknown;
   try {
     body = await request.json();

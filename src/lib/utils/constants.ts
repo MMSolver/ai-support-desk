@@ -8,6 +8,14 @@ export const TICKET_STATUSES = [
   'resolved',
   'closed',
   'needs_review',
+  // Transient value set by `createTicket` and normally cleared within the
+  // same request by `updateTicketAnalysis`/`markTicketNeedsReview`. Included
+  // here (rather than left out of the type) so a ticket that outlives that
+  // window — e.g. the request process crashes or times out between the
+  // insert and the AI call finishing — still renders correctly (a real
+  // status/label/filter option) instead of producing an unmapped status
+  // that a controlled `<Select>` can't reflect (see `ticket-filters.tsx`).
+  'processing',
 ] as const;
 
 export type TicketCategory = (typeof TICKET_CATEGORIES)[number];
@@ -35,4 +43,5 @@ export const STATUS_LABELS: Record<TicketStatus, string> = {
   resolved: 'Resolved',
   closed: 'Closed',
   needs_review: 'Needs Review',
+  processing: 'Processing',
 };

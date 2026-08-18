@@ -57,7 +57,7 @@ export interface ApiError {
   success: false;
   error: {
     message: string;
-    code: 'VALIDATION_ERROR' | 'NOT_FOUND' | 'AI_FAILURE' | 'INTERNAL_ERROR';
+    code: 'VALIDATION_ERROR' | 'NOT_FOUND' | 'AI_FAILURE' | 'INTERNAL_ERROR' | 'RATE_LIMITED';
     details?: unknown;
   };
 }
