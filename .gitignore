@@ -43,3 +43,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# development / AI-agent internal files (kept locally, not published)
+/.claude/
+/CLAUDE.md
+/AGENTS.md
+/PROJECT.md
