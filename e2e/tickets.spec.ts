@@ -58,4 +58,19 @@ test.describe('Ticket list', () => {
     }
     await expect(page.getByText('Open', { exact: true }).first()).toBeVisible();
   });
+
+  // Regression test: Base UI's Select.Value renders the raw selected value
+  // ('__all__', the filters' internal ALL sentinel) unless given a render
+  // function to map it to a label — see ticket-filters.tsx.
+  test('shows friendly labels in the filter dropdowns, not the raw "__all__" value', async ({
+    page,
+  }) => {
+    await page.goto('/tickets');
+
+    const triggers = page.locator('[data-slot="select-trigger"]');
+    await expect(triggers.nth(0)).toContainText('All statuses');
+    await expect(triggers.nth(1)).toContainText('All priorities');
+    await expect(triggers.nth(2)).toContainText('All categories');
+    await expect(page.getByText('__all__')).toHaveCount(0);
+  });
 });

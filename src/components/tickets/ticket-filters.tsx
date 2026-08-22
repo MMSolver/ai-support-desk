@@ -17,6 +17,9 @@ import {
   TICKET_CATEGORIES,
   TICKET_PRIORITIES,
   TICKET_STATUSES,
+  type TicketCategory,
+  type TicketPriority,
+  type TicketStatus,
 } from '@/lib/utils/constants';
 
 const ALL = '__all__';
@@ -56,7 +59,11 @@ export function TicketFilters() {
         onValueChange={(value) => setFilter('status', value ?? ALL)}
       >
         <SelectTrigger size="sm" className="w-36">
-          <SelectValue placeholder="Status" />
+          <SelectValue placeholder="Status">
+            {(value: string) =>
+              value === ALL ? 'All statuses' : STATUS_LABELS[value as TicketStatus]
+            }
+          </SelectValue>
         </SelectTrigger>
         <SelectContent>
           <SelectItem value={ALL}>All statuses</SelectItem>
@@ -73,7 +80,11 @@ export function TicketFilters() {
         onValueChange={(value) => setFilter('priority', value ?? ALL)}
       >
         <SelectTrigger size="sm" className="w-36">
-          <SelectValue placeholder="Priority" />
+          <SelectValue placeholder="Priority">
+            {(value: string) =>
+              value === ALL ? 'All priorities' : PRIORITY_LABELS[value as TicketPriority]
+            }
+          </SelectValue>
         </SelectTrigger>
         <SelectContent>
           <SelectItem value={ALL}>All priorities</SelectItem>
@@ -90,7 +101,11 @@ export function TicketFilters() {
         onValueChange={(value) => setFilter('category', value ?? ALL)}
       >
         <SelectTrigger size="sm" className="w-36">
-          <SelectValue placeholder="Category" />
+          <SelectValue placeholder="Category">
+            {(value: string) =>
+              value === ALL ? 'All categories' : CATEGORY_LABELS[value as TicketCategory]
+            }
+          </SelectValue>
         </SelectTrigger>
         <SelectContent>
           <SelectItem value={ALL}>All categories</SelectItem>
