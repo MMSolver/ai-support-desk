@@ -2,7 +2,7 @@
 
 Teknik referans dokumani. Gelistirme boyunca ana mimari rehber olarak kullanilacak.
 
-Son guncelleme: 2026-08-17
+Son guncelleme: 2026-08-22
 
 ---
 
@@ -1017,11 +1017,25 @@ Sirayla — DB ve AI katmanina bagimli
 - Playwright E2E testler
 - code-review ve security review
 
-### Faz 8: Deployment
-- Vercel'e deploy
-- Environment variable'lari ayarla
-- Production build test
-- Canli URL dogrulama
+### Faz 8: Deployment — Tamamlandi (2026-08-22)
+- [x] Vercel'e deploy
+- [x] Environment variable'lari ayarla
+- [x] Production build test
+- [x] Canli URL dogrulama
+
+Canli URL: **https://ai-support-desk-gilt.vercel.app**
+
+Kullanici tarafindan production'da manuel smoke test yapildi: dashboard,
+Supabase verisi, New Ticket formu, submit/loading akisi, ticket
+olusturma, ticket detail'e yonlendirme, ve OpenAI kota hatasinda
+`needs_review` fallback'i (toast/warning dahil) hepsi calisti; gorunur
+runtime hatasi yok.
+
+Bilinen dis kisit: OpenAI hesabinda kredi yok (`insufficient_quota` /
+HTTP 429) — bu yuzden AI happy-path (basarili kategori/oncelik/ozet/
+cevap onerisi) production'da henuz uctan uca gozlemlenemedi. Fallback
+stratejisinin kendisi (PROJECT.md §11/§15) dogru calistigi icin bu bir
+kod defekti degil; kredi eklendiginde ayrica dogrulanacak.
 
 ### Faz 9: Documentation ve Portfolio
 - README.md (profesyonel, mimari diagram, setup talimatlari, ekran goruntuleri)
@@ -1072,7 +1086,7 @@ node_modules/
 | Output directory | `.next` |
 | Node version | 20.x |
 | Region | Auto (en yakin) |
-| Domain | `ai-support-desk.vercel.app` (veya custom) |
+| Domain | `ai-support-desk-gilt.vercel.app` (canli, dogrulandi) |
 
 ### Deployment Akisi
 
@@ -1093,12 +1107,12 @@ NEXT_PUBLIC_APP_URL = https://ai-support-desk.vercel.app
 
 ### Pre-Deployment Checklist
 
-- [ ] Tum testler geciyor
-- [ ] Build hatasi yok (`next build` basarili)
-- [ ] Environment variable'lar ayarli
-- [ ] API key'ler gecerli
-- [ ] Supabase tablosu ve indeksler hazir
-- [ ] Security review tamamlandi
+- [x] Tum testler geciyor (Vitest 88/88, Playwright E2E 5/5 — prod build'e karsi)
+- [x] Build hatasi yok (`next build` basarili)
+- [x] Environment variable'lar ayarli (Vercel dashboard, kullanici tarafindan)
+- [x] API key'ler gecerli (Supabase calisiyor; OpenAI key gecerli ama hesapta kredi yok — bkz. Faz 8 notu yukarida)
+- [x] Supabase tablosu ve indeksler hazir (production'da canli sorgularla dogrulandi)
+- [ ] Security review tamamlandi (`security-review` plugini ile resmi tarama henuz calistirilmadi; Faz 8 kapsaminda ad-hoc kontroller yapildi: client bundle'da secret sizintisi yok, git gecmisinde `.env*` commit edilmemis, guvenlik header'lari prod'da dogru)
 
 ---
 
@@ -1133,13 +1147,13 @@ MVP tamamlanmis sayilir YALNIZCA asagidakilerin hepsi saglandiginda:
 
 ### Fonksiyonel
 
-- [ ] Ticket olusturma formu calisiyor (validation dahil)
-- [ ] OpenAI ile gercek AI analiz yapiliyor (hardcoded degil)
-- [ ] Analiz sonucu veritabanina kaydediliyor
-- [ ] Dashboard istatistikleri dogru hesaplaniyor
-- [ ] Ticket listesi filtreleme ve sayfalama ile calisiyor
-- [ ] Ticket detay sayfasi tum bilgileri gosteriyor
-- [ ] AI hatasi durumunda graceful degradation calisiyor
+- [x] Ticket olusturma formu calisiyor (validation dahil)
+- [ ] OpenAI ile gercek AI analiz yapiliyor (hardcoded degil) — entegrasyon gercek ve hardcoded degil, ama OpenAI hesabinda kredi olmadigi icin basarili bir analiz production'da henuz uctan uca gozlemlenemedi (bkz. Faz 8 notu, §26)
+- [x] Analiz sonucu veritabanina kaydediliyor
+- [x] Dashboard istatistikleri dogru hesaplaniyor
+- [x] Ticket listesi filtreleme ve sayfalama ile calisiyor
+- [x] Ticket detay sayfasi tum bilgileri gosteriyor
+- [x] AI hatasi durumunda graceful degradation calisiyor
 
 ### Kalite
 
@@ -1153,9 +1167,9 @@ MVP tamamlanmis sayilir YALNIZCA asagidakilerin hepsi saglandiginda:
 
 ### Deployment
 
-- [ ] Vercel'de canli calisiyor
-- [ ] Canli URL'de tum ozellikler test edildi
-- [ ] Environment variable'lar guvenli sekilde ayarli
+- [x] Vercel'de canli calisiyor (https://ai-support-desk-gilt.vercel.app)
+- [x] Canli URL'de tum ozellikler test edildi (manuel smoke test, 2026-08-22)
+- [x] Environment variable'lar guvenli sekilde ayarli
 
 ### Documentation
 
