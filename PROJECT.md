@@ -1037,10 +1037,20 @@ cevap onerisi) production'da henuz uctan uca gozlemlenemedi. Fallback
 stratejisinin kendisi (PROJECT.md §11/§15) dogru calistigi icin bu bir
 kod defekti degil; kredi eklendiginde ayrica dogrulanacak.
 
-### Faz 9: Documentation ve Portfolio
-- README.md (profesyonel, mimari diagram, setup talimatlari, ekran goruntuleri)
-- Ekran goruntuleri al (dashboard, form, detay, mobile)
-- Demo akisi hazirla
+### Faz 9: Documentation ve Portfolio — Tamamlandi (2026-08-22)
+- [x] README.md (profesyonel, mimari diagram, setup talimatlari, ekran goruntuleri)
+- [x] Ekran goruntuleri al (dashboard, form, detay, mobile)
+- [x] Demo akisi hazirla
+
+`README.md` yeniden yazildi (tech badge'ler, canli demo linki, 6 ekran
+goruntusu [4 desktop + 2 mobile — canli production'a karsi cekildi],
+ozellik listesi, mimari/istek yasam dongusu diyagrami, kurulum/test/
+deployment talimatlari, kisa teknoloji gerekcesi tablosu, lisans).
+`LICENSE` (MIT) eklendi. `docs/DEMO.md` (30 saniyelik demo senaryosu)
+ve `docs/PORTFOLIO.md` (Upwork/LinkedIn icin 3 paragraflik aciklama)
+eklendi. Ekran goruntuleri icin production DB'deki eski E2E/smoke-test
+kayitlari (kullanici onayiyla) temizlenip gercek gorunumlu 3 demo
+ticket ile degistirildi — bkz. `docs/screenshots/`.
 
 ---
 
@@ -1173,9 +1183,9 @@ MVP tamamlanmis sayilir YALNIZCA asagidakilerin hepsi saglandiginda:
 
 ### Documentation
 
-- [ ] README.md profesyonel ve eksiksiz
-- [ ] Ekran goruntuleri ekli
-- [ ] Setup talimatlari test edildi (baskasi takip edebilir mi?)
+- [x] README.md profesyonel ve eksiksiz
+- [x] Ekran goruntuleri ekli
+- [x] Setup talimatlari test edildi (baskasi takip edebilir mi?) — adimlar gercek `package.json` script'leri ve `.env.example` ile birebir dogrulandi; bagimsiz bir kisi tarafindan henuz fiilen denenmedi
 
 ---
 
